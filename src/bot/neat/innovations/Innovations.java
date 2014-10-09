@@ -20,6 +20,8 @@ public class Innovations
 		= new HashMap<LinkInnovation, ArrayList<NeuronInnovation>>();
 	int newNeuronInnovationId = 0;
 	
+	int genomeId = 0;
+	
 	public Innovations(int inputNum, int outputNum)
 	{
 		for(int inputI = 0; inputI < inputNum; inputI++)
@@ -120,6 +122,11 @@ public class Innovations
 		neuronInnovations.get(li).add(ni);
 		newNeuronInnovationId++;
 		return ni;
+	}
+	
+	public int getNewGenomeId()
+	{
+		return genomeId++;
 	}
 
 	public ArrayList<LinkInnovation> getInitialLinks()

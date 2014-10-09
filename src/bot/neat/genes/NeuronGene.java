@@ -1,5 +1,6 @@
 package bot.neat.genes;
 
+import bot.neat.NeatParams;
 import bot.neat.innovations.NeuronInnovation;
 
 public class NeuronGene implements Comparable<NeuronGene>
@@ -7,7 +8,7 @@ public class NeuronGene implements Comparable<NeuronGene>
 	int innovationId;
 	NeuronType type;
 	boolean recurrent; // has self loop
-	double activationResponse; // sigmoid curve factor
+	double activationResponse = 1; // sigmoid curve factor - default 1
 	double posX; // position in the network grid
 	double posY; // useful for drawing, deciding link recurrency and network depth
 	
@@ -43,6 +44,12 @@ public class NeuronGene implements Comparable<NeuronGene>
 				ng.recurrent, ng.posX, ng.posY);
 		
 		activationResponse = ng.activationResponse;
+	}
+
+	// make a small random move to the activation response
+	public void smallRandomizeActivationResponse()
+	{
+		activationResponse += (Math.random() - 0.5) * 2 * NeatParams.smallActivationResponseRandomMove;
 	}
 
 	public boolean isRecurrent() {

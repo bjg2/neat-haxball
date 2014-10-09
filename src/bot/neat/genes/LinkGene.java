@@ -53,7 +53,7 @@ public class LinkGene implements Comparable<LinkGene>
 		weight = (Math.random() - 0.5) * 2 * NeatParams.maxWeight;
 	}
 	
-	// make a small random to weight
+	// make a small random move to the weight
 	public void smallRandomizeWeight()
 	{
 		weight += (Math.random() - 0.5) * 2 * NeatParams.smallWeightRandomMove;
