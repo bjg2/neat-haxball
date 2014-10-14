@@ -1,52 +1,75 @@
-package bot.neat;
+package ai.neat;
+
+import game.Game;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import bot.neat.genes.LinkGene;
-import bot.neat.genes.NeuronGene;
-import bot.neat.innovations.Innovations;
-import bot.neatOld.NeuralNetBot;
+import processing.core.PApplet;
+import ai.neat.bot.NeuralNetBot;
+import ai.neat.genes.LinkGene;
+import ai.neat.genes.NeuronGene;
+import ai.neat.innovations.Innovations;
 
 public class Neat
 {
 	ArrayList<Genome> population = new ArrayList<Genome>();
 	ArrayList<Specie> species = new ArrayList<Specie>();
 	Innovations innovations = new Innovations(NeatParams.inputNodesN, NeatParams.outputNodesN);
+	PApplet processingApplet;
 	
-	public Neat()
+	public Neat(PApplet processingApplet)
 	{
+		this.processingApplet = processingApplet;
+		
 		// make initial random population
 		Specie newSpecie = new Specie(innovations.getNewSpecieId());
 		for(int i = 0; i < NeatParams.populationSize; i++)
 		{
-			Genome newOrganism = new Genome(innovations.getNewGenomeId(),
-					NeatParams.inputNodesN, NeatParams.inputNodesN, innovations);
+			Genome newOrganism = new Genome(innovations.getNewGenomeId(), innovations);
+			
+			// create appropriate neural net
+			newOrganism.createPhenotype();
+			
+			// add it to the only specie
 			newSpecie.addMember(newOrganism);
 			population.add(newOrganism);
 		}
 		species.add(newSpecie);
 	}
+	
+	public void train()
+	{
+		// all the generations
+		for(int generationI = 0; generationI < NeatParams.generationsN; generationI++)
+		{
+			// new generation
+			epoch();
+		}
+	}
 
 	// play one game between two bots, from which the fitness will be calculated
-	void playGame(NeuralNetBot net1, NeuralNetBot net2)
+	void playGame(NeuralNetBot bot1, NeuralNetBot bot2)
 	{
-		/*
-		Game game = new Game(null, net1, net2);		
+		bot1.gameStarted();
+		bot2.gameStarted();
+		
+		Game game = new Game(processingApplet, bot1, bot2);		
 		while(!game.isGameFinished())
 		{
 			game.update(null, null);
 		}
-		*/
 	}
 	
 	// play the whole tournament, from which fitness will be calculated
 	public void playTournament()
 	{
+		// swiss system
 		SwissPairingSystem swiss = new SwissPairingSystem(population.size(), NeatParams.numberOfRounds);
 		
+		// play the tournament
 		for(int roundI = 0; roundI < NeatParams.numberOfRounds; roundI++)
 		{
 			int[][] pairings = swiss.makeNewPairings();
@@ -56,18 +79,19 @@ public class Neat
 				int team1 = pairings[pairI][0];
 				int team2 = pairings[pairI][1];
 				
-				/*
-				NeuralNetBot net1 = generation.get(team1);
-				NeuralNetBot net2 = generation.get(team2);
+				NeuralNetBot bot1 = population.get(team1).phenotype;
+				NeuralNetBot bot2 = population.get(team2).phenotype;
+								
+				playGame(bot1, bot2);
 				
-				net1.gameFitness = 0;
-				net2.gameFitness = 0;
-				
-				playGame(net1, net2);
-				*/
-				
-				swiss.gameFinished(team1, team2, Math.random(), Math.random());
+				swiss.gameFinished(team1, team2, bot1.getGameFitness(), bot2.getGameFitness());
 			}
+		}
+		
+		// put score as genomes fitness
+		for(int genomeI = 0; genomeI < population.size(); genomeI++)
+		{
+			population.get(genomeI).fitness = swiss.scores[genomeI];
 		}
 	}	
 	
@@ -75,7 +99,7 @@ public class Neat
 	// make species
 	// etc
 	public void epoch()
-	{
+	{		
 		// play tournament to determine all the fitness scores
 		playTournament();
 		
@@ -160,6 +184,9 @@ public class Neat
 				baby.mutateNewLink();
 				baby.mutateWeights();
 				baby.mutateActivationResponse();
+				
+				// create appropriate neural net
+				baby.createPhenotype();
 				
 				// add to the new population
 				population.add(baby);

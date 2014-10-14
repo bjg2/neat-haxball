@@ -1,4 +1,4 @@
-package bot.neat.genes;
+package ai.neat.genes;
 
 public enum NeuronType
 {

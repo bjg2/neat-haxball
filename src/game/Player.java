@@ -8,9 +8,9 @@ import org.jbox2d.common.Vec2;
 import processing.core.PApplet;
 import processing.core.PVector;
 import shiffman.box2d.Box2DProcessing;
-import bot.ABot;
-import bot.GameMove;
-import bot.GameState;
+import ai.ABot;
+import ai.GameMove;
+import ai.GameState;
 
 public class Player extends AGameObject
 {

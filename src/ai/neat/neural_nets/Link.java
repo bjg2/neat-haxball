@@ -1,4 +1,4 @@
-package bot.neat.neural_nets;
+package ai.neat.neural_nets;
 
 public class Link
 {

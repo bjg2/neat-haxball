@@ -1,7 +1,7 @@
-package bot.neat.genes;
+package ai.neat.genes;
 
-import bot.neat.NeatParams;
-import bot.neat.innovations.LinkInnovation;
+import ai.neat.NeatParams;
+import ai.neat.innovations.LinkInnovation;
 
 public class LinkGene implements Comparable<LinkGene>
 {

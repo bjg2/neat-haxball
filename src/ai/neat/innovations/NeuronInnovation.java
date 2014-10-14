@@ -1,6 +1,6 @@
-package bot.neat.innovations;
+package ai.neat.innovations;
 
-import bot.neat.genes.NeuronType;
+import ai.neat.genes.NeuronType;
 
 public class NeuronInnovation
 {

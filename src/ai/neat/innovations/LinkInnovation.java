@@ -1,4 +1,4 @@
-package bot.neat.innovations;
+package ai.neat.innovations;
 
 public class LinkInnovation
 {

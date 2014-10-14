@@ -1,12 +1,12 @@
-package bot.neat.neural_nets;
+package ai.neat.neural_nets;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import bot.neat.NeatUtils;
-import bot.neat.genes.LinkGene;
-import bot.neat.genes.NeuronGene;
-import bot.neat.genes.NeuronType;
+import ai.neat.NeatUtils;
+import ai.neat.genes.LinkGene;
+import ai.neat.genes.NeuronGene;
+import ai.neat.genes.NeuronType;
 
 public class NeuralNet 
 {
@@ -41,7 +41,7 @@ public class NeuralNet
 	}
 	
 	// get the outputs from the inputs
-	public double[] Update(double[] inputs)
+	public double[] update(double[] inputs)
 	{
 		if(runType == NeuralNetRunType.Active)
 		{

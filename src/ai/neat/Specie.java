@@ -1,4 +1,4 @@
-package bot.neat;
+package ai.neat;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -8,7 +8,7 @@ import org.jbox2d.common.Vec2;
 import processing.core.PApplet;
 import processing.core.PVector;
 import shiffman.box2d.Box2DProcessing;
-import bot.GameState;
+import ai.GameState;
 
 public class Ball extends AGameObject
 {

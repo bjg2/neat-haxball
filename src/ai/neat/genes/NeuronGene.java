@@ -1,7 +1,7 @@
-package bot.neat.genes;
+package ai.neat.genes;
 
-import bot.neat.NeatParams;
-import bot.neat.innovations.NeuronInnovation;
+import ai.neat.NeatParams;
+import ai.neat.innovations.NeuronInnovation;
 
 public class NeuronGene implements Comparable<NeuronGene>
 {

@@ -17,9 +17,9 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 import shiffman.box2d.Box2DProcessing;
-import bot.ABot;
-import bot.GameMove;
-import bot.GameState;
+import ai.ABot;
+import ai.GameMove;
+import ai.GameState;
 
 public class Game
 {
@@ -230,7 +230,6 @@ public class Game
 	public void update(HashMap<Integer, Boolean> keyCodesPressed,
 			HashMap<Character, Boolean> keysPressed)
 	{
-
 		if(timeLeft <= 0)
 		{		
 			return;
@@ -359,7 +358,7 @@ public class Game
 			return;
 		}
 
-		
+		// send the bots that game is finished
 		if(timeLeft == 0)
 		{
 			for(int teamId = 0; teamId < 2; teamId++)

@@ -1,6 +1,6 @@
-package bot.neat;
+package ai.neat;
 
-import bot.neat.neural_nets.NeuralNetRunType;
+import ai.neat.neural_nets.NeuralNetRunType;
 
 public class NeatParams
 {
@@ -41,6 +41,7 @@ public class NeatParams
 	
 	// genetic algo params
 	public static int populationSize = 100;
+	public static int generationsN = 100;
 	public static int numberOfRounds = 20;
 	public static double populationPercentMating = 0.2;
 	public static double crossoverRate = 0.7;

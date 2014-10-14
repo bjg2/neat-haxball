@@ -1,15 +1,17 @@
-package bot.neat;
+package ai.neat;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import bot.neat.genes.LinkGene;
-import bot.neat.genes.NeuronGene;
-import bot.neat.genes.NeuronType;
-import bot.neat.innovations.Innovations;
-import bot.neat.innovations.LinkInnovation;
-import bot.neat.innovations.NeuronInnovation;
+import ai.neat.bot.NeuralNetBot;
+import ai.neat.genes.LinkGene;
+import ai.neat.genes.NeuronGene;
+import ai.neat.genes.NeuronType;
+import ai.neat.innovations.Innovations;
+import ai.neat.innovations.LinkInnovation;
+import ai.neat.innovations.NeuronInnovation;
 
+@SuppressWarnings("unchecked")
 public class Genome implements Comparable<Genome>
 {
 	int genomeId;
@@ -26,6 +28,8 @@ public class Genome implements Comparable<Genome>
 	int specieId;
 	
 	Innovations innovations;
+	
+	NeuralNetBot phenotype;
 	
 	public Genome()
 	{
@@ -52,11 +56,11 @@ public class Genome implements Comparable<Genome>
 		this.links = links;
 	}
 	
-	public Genome(int genomeId, int inputNum, int outputNum, Innovations innovations)
+	public Genome(int genomeId, Innovations innovations)
 	{
 		this.genomeId = genomeId;
-		this.inputNum = inputNum;
-		this.outputNum = outputNum;
+		this.inputNum = NeatParams.inputNodesN;
+		this.outputNum = NeatParams.outputNodesN;
 		this.innovations = innovations;
 				
 		ArrayList<NeuronInnovation> initialNeurons = innovations.getInitialNeurons();
@@ -298,6 +302,12 @@ public class Genome implements Comparable<Genome>
 				ng.smallRandomizeActivationResponse();
 			}
 		}
+	}
+	
+	// create the neural net phenotype
+	public void createPhenotype()
+	{
+		phenotype = new NeuralNetBot(neurons, links);
 	}
 
 	public double getFitness() {

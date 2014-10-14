@@ -1,4 +1,4 @@
-package bot;
+package ai;
 
 import org.jbox2d.common.Vec2;
 

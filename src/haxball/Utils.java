@@ -1,7 +1,6 @@
 package haxball;
 
 import java.io.File;
-import java.util.HashSet;
 
 import org.jbox2d.common.Vec2;
 
@@ -135,24 +134,6 @@ public final class Utils
 		
 		scoreTextH = 25;
 		scoreFont = parent.createFont("Comic Sans MS Bold", scoreTextH);
-	}
-	
-	// making int array from hashset of ints
-	public static int[] HashSetToArray(HashSet<Integer> set)
-	{
-		int[] ret = new int[set.size()];
-		int i = 0;
-		for(int el : set)
-		{
-			ret[i++] = el;
-		}
-		return ret;
-	}
-
-	// sigmoid function
-	public static double sigmoid(double x)
-	{
-		return 1 / (1 + Math.exp(-x));
 	}
 	
 	// dist point P from line segment AB

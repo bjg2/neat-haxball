@@ -1,4 +1,4 @@
-package bot.neat;
+package ai.neat;
 
 
 public class SwissPairingSystem

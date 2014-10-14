@@ -1,9 +1,9 @@
-package bot.neat.neural_nets;
+package ai.neat.neural_nets;
 
 import java.util.ArrayList;
 
-import bot.neat.genes.NeuronGene;
-import bot.neat.genes.NeuronType;
+import ai.neat.genes.NeuronGene;
+import ai.neat.genes.NeuronType;
 
 public class Neuron
 {

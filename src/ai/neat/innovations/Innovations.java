@@ -1,9 +1,9 @@
-package bot.neat.innovations;
+package ai.neat.innovations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bot.neat.genes.NeuronType;
+import ai.neat.genes.NeuronType;
 
 public class Innovations
 {

@@ -1,4 +1,4 @@
-package bot;
+package ai;
 
 public class GameMove
 {

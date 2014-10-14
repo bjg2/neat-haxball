@@ -4,9 +4,8 @@ import game.Game;
 
 import java.util.HashMap;
 
+import ai.neat.Neat;
 import processing.core.PApplet;
-import bot.neatOld.NeatTrainer;
-import bot.neatOld.NeuralNetBot;
 
 public class Haxball extends PApplet
 {
@@ -37,12 +36,8 @@ public class Haxball extends PApplet
 		
 		//game = new Game(this, null, null);
 		
-		String netsPath = "D:/skola/diplomski/haxball/nets";
-		NeatTrainer neat = new NeatTrainer(this);
-		neat.train(netsPath);
-		//NeuralNetBot net1 = neat.getNeuralNet(netsPath + "/133/0");
-		//NeuralNetBot net2 = neat.getNeuralNet(netsPath + "/133/1");
-		//game = new Game(this, net1, net2);
+		Neat neat = new Neat(this);
+		neat.train();
 	}
 	
 	// init all important key codes to not pressed
