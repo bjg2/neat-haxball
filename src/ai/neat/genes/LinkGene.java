@@ -34,7 +34,7 @@ public class LinkGene implements Comparable<LinkGene>
 		this.recurrent = recurrent;
 		this.innovationId = inovationId;
 		
-		if(weight == Double.NaN)
+		if(Double.isNaN(weight))
 		{
 			totallyRandomizeWeight();
 		}
@@ -85,6 +85,16 @@ public class LinkGene implements Comparable<LinkGene>
 
 	public boolean isRecurrent() {
 		return recurrent;
+	}
+
+	public String toString()
+	{
+		return "innovationId: " + innovationId
+				+ " fromNeuron: " + fromNeuron
+				+ " toNeuron: " + toNeuron
+				+ " weight: " + weight
+				+ " enabled: " + enabled
+				+ " recurrent: " + recurrent;
 	}
 
 	// compare by innovationId

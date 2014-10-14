@@ -15,6 +15,9 @@ public class FitnessCalculator
 	public static double defenceW = 0;	
 	
 	double fitness;
+	double fitnessSum;
+	double goalsGiven;
+	double goalsReceived;
 	
 	public void gameStared()
 	{
@@ -65,7 +68,11 @@ public class FitnessCalculator
 	public void gameFinished(GameState state)
 	{
 		// better score better bot
-		fitness += (state.myScore - state.enemyScore) * scoreW;		
+		fitness += (state.myScore - state.enemyScore) * scoreW;
+		
+		fitnessSum += fitness;
+		goalsGiven += state.myScore;
+		goalsReceived += state.enemyScore;
 	}
 	
 	// calculate attack fitness for resolved ball point

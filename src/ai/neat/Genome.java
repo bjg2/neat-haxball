@@ -3,6 +3,7 @@ package ai.neat;
 import haxball.Logger;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 import ai.neat.bot.NeuralNetBot;
@@ -321,6 +322,28 @@ public class Genome implements Comparable<Genome>
 	{
 		phenotype = new NeuralNetBot(neurons, links);
 	}
+	
+	public void saveGenome(String savePath)
+	{
+		String genomeText = "genomeId: " + genomeId + "\r\n";
+		genomeText += "fitness: " + fitness + "\r\n";
+		genomeText += "adjustedFitness: " + adjustedFitness + "\r\n";
+		genomeText += "amountToSpawn: " + amountToSpawn + "\r\n";
+		
+		genomeText += "neurons:\r\n";
+		for(Map.Entry<Integer, NeuronGene> neuronEntry : neurons.entrySet())
+		{
+			genomeText += neuronEntry.getValue() + "\r\n";
+		}
+		
+		genomeText += "links:\r\n";
+		for(Map.Entry<Integer, LinkGene> linkEntry : links.entrySet())
+		{
+			genomeText += linkEntry.getValue() + "\r\n";
+		}
+				
+		Logger.logToFile(savePath + "/" + genomeId + ".txt", genomeText);
+	}
 
 	public double getFitness() {
 		return fitness;
@@ -344,8 +367,8 @@ public class Genome implements Comparable<Genome>
 
 	public int compareTo(Genome g)
 	{
-		if(fitness - g.fitness > 0) return 1;
-		if(fitness - g.fitness < 0) return -1;
+		if(fitness - g.fitness < 0) return 1;
+		if(fitness - g.fitness > 0) return -1;
 		return 0;
 	}
 }

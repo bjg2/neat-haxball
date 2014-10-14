@@ -1,5 +1,8 @@
 package ai.neat;
 
+import haxball.Logger;
+import haxball.Utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -28,6 +31,7 @@ public class Specie implements Comparable<Specie>
 	public void addMember(Genome g)
 	{
 		members.add(g);
+		g.setSpecieId(specieId);
 		
 		if(leader == null)
 		{
@@ -71,6 +75,7 @@ public class Specie implements Comparable<Specie>
 	// calculate how many offspring should this specie spawn
 	public void calculateSpawnAmount()
 	{
+		adjustFitness();
 		spawnRequired = 0;
 		for(Genome g : members)
 		{
@@ -139,6 +144,28 @@ public class Specie implements Comparable<Specie>
 	public void clearMembers()
 	{
 		members.clear();
+	}
+	
+	// save to file
+	public void saveSpecie(String savePath)
+	{
+		Utils.createFolderIfNotExists(savePath);
+		
+		String specieText = "specieId: " + specieId + "\r\n";
+		specieText += "members size: " + members.size() + "\r\n";
+		specieText += "members:";
+		for(Genome g : members)
+		{
+			specieText += " " + g.genomeId;
+		}
+		specieText +=  "\r\n";
+		specieText += "leader: " + leader.genomeId + "\r\n";
+		specieText += "age: " + age + "\r\n";
+		specieText += "generations without improvement: " + generationsWithNoImprovement + "\r\n";
+		specieText += "avgAdjustedFitness: " + avgAdjustedFitness + "\r\n";
+		specieText += "spawnRequired: " + spawnRequired + "\r\n";
+		
+		Logger.logToFile(savePath + "/" + specieId + ".txt", specieText);
 	}
 
 	// compare by best fitness in the specie

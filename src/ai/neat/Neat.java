@@ -43,16 +43,66 @@ public class Neat
 	}
 	
 	public void train()
-	{
+	{		
 		// all the generations
+		// 0 is the default population
 		for(int epochI = 0; epochI < NeatParams.generationsN; epochI++)
 		{
 			// new epoch
-			
 			Logger.log("epoch " + epochI + " started");
 			epoch(Utils.loggingFolder + "/" + epochI);
 			Logger.log("epoch " + epochI + " finished", true);
 		}
+
+		Logger.addTab();
+		
+		// play last tournament
+		playTournament();
+		
+		// sort by fitness in every old specie and update age
+		Logger.log("updating specie last time started");
+		for(Specie s : species)
+		{
+			s.newEpoch();
+		}
+		Logger.log("updating specie last time finished", true);
+
+		savePopulation(Utils.loggingFolder + "/" + NeatParams.generationsN);
+		
+		Logger.removeTab();
+	}
+	
+	// save genomes and species
+	public void savePopulation(String savePath)
+	{
+		Logger.log("saving population started");
+
+		// create folders
+		Utils.createFolderIfNotExists(savePath);
+		Utils.createFolderIfNotExists(savePath + "/species");
+		Utils.createFolderIfNotExists(savePath + "/genomes");
+
+		// save info text
+		String infoText = "population size: " + population.size() + "\r\n";
+		infoText += "species num: " + species.size() + "\r\n";
+		Logger.logToFile(savePath + "/info.txt", infoText);
+		
+		// save species
+		for(Specie s : species)
+		{
+			s.saveSpecie(savePath + "/species");
+		}
+		
+		// save genomes
+		for(Genome g : population)
+		{
+			g.saveGenome(savePath + "/genomes");			
+		}
+		
+		// save innovations
+		innovations.saveInnovations(savePath);
+		
+		Logger.log("saving population finished", true);
 	}
 
 	// play one game between two bots, from which the fitness will be calculated
@@ -61,7 +111,7 @@ public class Neat
 		bot1.gameStarted();
 		bot2.gameStarted();
 		
-		Game game = new Game(processingApplet, bot1, bot2);		
+		Game game = new Game(processingApplet, bot1, bot2);
 		while(!game.isGameFinished())
 		{
 			game.update(null, null);
@@ -145,7 +195,11 @@ public class Neat
 			}
 		}
 		Logger.log("updating specie new epoch finished", true);
+		
+		// save population
+		savePopulation(savePath);
 
+		int killedSpeciesForNotImproving = 0;
 		Logger.log("removing not improving species started");
 		for(int specieI = 0; specieI < species.size(); specieI++)
 		{
@@ -160,6 +214,7 @@ public class Neat
 				// remove this specie
 				species.remove(specieI);
 				specieI--;
+				killedSpeciesForNotImproving++;
 			}
 		}
 		Logger.log("removing not improving species finished", true);
@@ -253,6 +308,8 @@ public class Neat
 			s.clearMembers();
 		}
 		
+		int newSpeciesNum = 0;
+		
 		// divide genomes into species
 		Logger.log("dividing genomes into species started");
 		Logger.addTab();
@@ -277,6 +334,7 @@ public class Neat
 				Specie newSpecie = new Specie(innovations.getNewSpecieId());
 				newSpecie.addMember(g);
 				species.add(newSpecie);
+				newSpeciesNum++;
 				
 				Logger.log("specie " + newSpecie.specieId + " created");
 			}
@@ -288,6 +346,7 @@ public class Neat
 		Logger.removeTab();
 		Logger.log("dividing genomes into species finished", true);
 		
+		int killedEmptySpeciesNum = 0;
 		Logger.log("removing empty species started");
 		for(int specieI = 0; specieI < species.size(); specieI++)
 		{
@@ -299,12 +358,24 @@ public class Neat
 				// noone in this specie
 				species.remove(specieI);
 				specieI--;
+				killedEmptySpeciesNum++;
 			}
 		}
 		Logger.log("removing empty species finished");
 		
 		Logger.log("dividing genomes into species finished");		
 		Logger.removeTab();
+		
+		// log epoch text
+		String epochText = "not improving species removed num: " + killedSpeciesForNotImproving + "\r\n";
+		epochText += "empty species removed num: " + killedEmptySpeciesNum + "\r\n";
+		epochText += "new spacies num: " + newSpeciesNum + "\r\n";
+		epochText += "best organism score: " + bestOrganism.fitness + "\r\n";
+		epochText += "best organism fitness sum: " + bestOrganism.phenotype.getGameFitnessSum() + "\r\n";
+		epochText += "best organism goals given: " + bestOrganism.phenotype.getGoalsGiven() + "\r\n";
+		epochText += "best organism goals received: " + bestOrganism.phenotype.getGoalsReceived() + "\r\n";
+		epochText += "best organism specie: " + bestOrganism.specieId + "\r\n";
+		Logger.logToFile(savePath + "/epoch.txt", epochText);
 	}
 	
 	// making baby genome from mum and dad genomes

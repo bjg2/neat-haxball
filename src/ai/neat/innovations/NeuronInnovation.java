@@ -22,4 +22,9 @@ public class NeuronInnovation
 	{
 		return type;
 	}
+
+	public String toString()
+	{
+		return "innovationId: " + innovationId + " neuronType: " + type;
+	}
 }

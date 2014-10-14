@@ -79,6 +79,15 @@ public class NeuronGene implements Comparable<NeuronGene>
 	public double getPosY() {
 		return posY;
 	}
+	
+	public String toString() {
+		return "innovationId: " + innovationId
+				+ " type: " + type
+				+ " recurrent: " + recurrent
+				+ " activationResponse: " + activationResponse
+				+ " posX: " + posX
+				+ " posY: " + posY;				
+	}
 
 	// compare on innovationId
 	public int compareTo(NeuronGene ng)

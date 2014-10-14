@@ -46,7 +46,7 @@ public class Logger
 		}
 		catch (IOException e)
 		{
-			System.out.println("ERROR LOGGING IN " + logText);
+			System.err.println("ERROR LOGGING IN " + logText);
 		}
 	}
 	
@@ -60,6 +60,18 @@ public class Logger
 		if(tabs.length() >= 1)
 		{
 			tabs = tabs.substring(1);			
+		}
+	}
+	
+	public static void logToFile(String filepath, String text)
+	{
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filepath))))
+		{
+			out.println(text);
+		}
+		catch (IOException e)
+		{
+			System.err.println("ERROR LOGGING TO " + filepath);
 		}
 	}
 }

@@ -25,6 +25,11 @@ public class LinkInnovation
 	public int getToNeuron() {
 		return toNeuron;
 	}
+	
+	public String toString()
+	{
+		return "innovationId: " + innovationId + " fromNeuron: " + fromNeuron + " toNeuron: " + toNeuron;
+	}
 
 	// equals on neuronIn and neuronOut
 	public boolean equals(Object obj)

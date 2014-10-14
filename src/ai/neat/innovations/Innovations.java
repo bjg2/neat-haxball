@@ -1,5 +1,7 @@
 package ai.neat.innovations;
 
+import haxball.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,8 +22,8 @@ public class Innovations
 		= new HashMap<LinkInnovation, ArrayList<NeuronInnovation>>();
 	int newNeuronInnovationId = 0;
 	
-	int genomeId = 0;
-	int specieId = 0;
+	int newGenomeId = 0;
+	int newSpecieId = 0;
 	
 	public Innovations(int inputNum, int outputNum)
 	{
@@ -30,7 +32,7 @@ public class Innovations
 			for(int outputI = 0; outputI < outputNum; outputI++)
 			{
 				LinkInnovation li = new LinkInnovation(newLinkInnovationId++,
-						inputI, outputI);
+						inputI, inputNum + outputI);
 				linkInnovations.put(li, li);
 				initialLinks.add(li);
 			}
@@ -125,14 +127,43 @@ public class Innovations
 		return ni;
 	}
 	
+	public void saveInnovations(String savePath)
+	{
+		String innovationsText = "newLinkInnovationId: " + newLinkInnovationId + "\r\n";
+		innovationsText += "newNeuronInnovationId: " + newNeuronInnovationId + "\r\n";
+		innovationsText += "newGenomeId: " + newGenomeId + "\r\n";
+		innovationsText += "newSpecieId: " + newSpecieId + "\r\n";
+		
+		innovationsText += "neuronInnovations:\r\n";
+		for(NeuronInnovation ni : initialNeurons)
+		{
+			innovationsText += ni + "\r\n";				
+		}
+		for(ArrayList<NeuronInnovation> innovations : neuronInnovations.values())
+		{
+			for(NeuronInnovation ni : innovations)
+			{
+				innovationsText += ni + "\r\n";				
+			}
+		}
+		
+		innovationsText += "linkInnovations:\r\n";
+		for(LinkInnovation li : linkInnovations.values())
+		{
+			innovationsText += li + "\r\n";
+		}
+		
+		Logger.logToFile(savePath + "/innovations.txt", innovationsText);
+	}
+	
 	public int getNewGenomeId()
 	{
-		return genomeId++;
+		return newGenomeId++;
 	}
 	
 	public int getNewSpecieId()
 	{
-		return specieId++;
+		return newSpecieId++;
 	}
 
 	public ArrayList<LinkInnovation> getInitialLinks()
@@ -145,3 +176,4 @@ public class Innovations
 		return initialNeurons;
 	}
 }
+
