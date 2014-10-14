@@ -1,5 +1,7 @@
 package bot.neat;
 
+import bot.neat.neural_nets.NeuralNetRunType;
+
 public class NeatParams
 {
 	// link mutations
@@ -42,4 +44,7 @@ public class NeatParams
 	public static int numberOfRounds = 20;
 	public static double populationPercentMating = 0.2;
 	public static double crossoverRate = 0.7;
+	
+	// only one layer update per net update
+	public static NeuralNetRunType neuralNetRunType = NeuralNetRunType.Snapshot;
 }
