@@ -1,8 +1,6 @@
 package bot.neat;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeMap;
 
 import bot.neat.genes.LinkGene;
@@ -31,6 +29,16 @@ public class Genome implements Comparable<Genome>
 	
 	public Genome()
 	{
+	}
+	
+	public Genome(Genome g)
+	{
+		this.genomeId = g.innovations.getNewGenomeId();
+		this.inputNum = g.inputNum;
+		this.outputNum = g.outputNum;
+		this.innovations = g.innovations;
+		this.neurons = (TreeMap<Integer, NeuronGene>) g.neurons.clone();
+		this.links = (TreeMap<Integer, LinkGene>) g.links.clone();
 	}
 	
 	public Genome(int genomeId, int inputNum, int outputNum, Innovations innovations,
@@ -291,189 +299,25 @@ public class Genome implements Comparable<Genome>
 			}
 		}
 	}
-	
-	// add neuron to the baby in the crossover
-	public static void addNeuronToBaby(Genome mum, Genome dad, Genome fitterParent,
-			TreeMap<Integer, NeuronGene> babyNeurons, int neuronId)
-	{
-		if(mum.neuronExists(neuronId) && dad.neuronExists(neuronId))
-		{
-			if(mum == fitterParent)
-			{
-				babyNeurons.put(neuronId, mum.neurons.get(neuronId));
-			}
-			else
-			{
-				babyNeurons.put(neuronId, dad.neurons.get(neuronId));
-			}
-		}
-		else if(mum.neuronExists(neuronId))
-		{
-			babyNeurons.put(neuronId, mum.neurons.get(neuronId));						
-		}
-		else
-		{
-			babyNeurons.put(neuronId, dad.neurons.get(neuronId));
-		}		
-	}
-	
-	// making baby genome from mum and dad genomes
-	public static Genome crossover(Genome mum, Genome dad)
-	{		
-		// find the fitter parent, as we will use the disjoint/excess genes from that parent
-		
-		Genome fitterParent;
-		
-		// compare by fitness / the more the better
-		if(mum.fitness == dad.fitness)
-		{
-			// they both have the same fitness
-			
-			// compare by genes count - the less the better
-			if(mum.links.size() == dad.links.size())
-			{
-				// they both have the same genes count
-				
-				// take a random parent
-				fitterParent = (Math.random() < 0.5)? mum : dad;
-			}
-			else if(mum.links.size() < dad.links.size())
-			{
-				fitterParent = mum;
-			}
-			else
-			{
-				fitterParent = dad;
-			}
-		}
-		else if(mum.fitness > dad.fitness)
-		{
-			fitterParent = mum;
-		}
-		else
-		{
-			fitterParent = dad;
-		}
-		
-		// iterate through it's genes
-		Iterator<Map.Entry<Integer, LinkGene>> mumIterator = mum.links.entrySet().iterator();
-		Iterator<Map.Entry<Integer, LinkGene>> dadIterator = mum.links.entrySet().iterator();
-		
-		LinkGene currentMumGene = mumIterator.next().getValue();
-		LinkGene currentDadGene = dadIterator.next().getValue();
 
-		TreeMap<Integer, NeuronGene> babyNeurons = new TreeMap<Integer, NeuronGene>();
-		TreeMap<Integer, LinkGene> babyLinks = new TreeMap<Integer, LinkGene>();
-		
-		LinkGene selectedGene;
-		// while there's more genes
-		while(currentMumGene != null || currentDadGene != null)
-		{
-			selectedGene = null;
-			
-			// mum has no more genes
-			if(currentMumGene == null)
-			{
-				// dad is fitter, he adds excess genes
-				if(dad == fitterParent)
-				{
-					selectedGene = currentDadGene;
-				}
-				
-				currentDadGene = null;
-				if(dadIterator.hasNext())
-				{
-					currentDadGene = dadIterator.next().getValue();					
-				}
-			}
-			// dad has no more genes
-			else if(currentDadGene == null)
-			{
-				// mum is fitter, she adds excess genes
-				if(mum == fitterParent)
-				{
-					selectedGene = currentMumGene;
-				}
-				
-				currentMumGene = null;
-				if(mumIterator.hasNext())
-				{
-					currentMumGene = mumIterator.next().getValue();					
-				}
-			}
-			else
-			{
-				// both mum and dad have more genes
-				
-				if(currentMumGene.getInnovationId() < currentDadGene.getInnovationId())
-				{
-					// mum is fitter, she adds disjoint genes
-					if(mum == fitterParent)
-					{
-						selectedGene = currentMumGene;
-					}
-					
-					currentMumGene = null;
-					if(mumIterator.hasNext())
-					{
-						currentMumGene = mumIterator.next().getValue();					
-					}	
-				}
-				else if(currentDadGene.getInnovationId() < currentMumGene.getInnovationId())
-				{
-					// dad is fitter, he adds disjoint genes
-					if(dad == fitterParent)
-					{
-						selectedGene = currentDadGene;
-					}
-					
-					currentDadGene = null;
-					if(dadIterator.hasNext())
-					{
-						currentDadGene = dadIterator.next().getValue();					
-					}		
-				}
-				else
-				{
-					// they both have this gene
-					// take a random one
-					
-					if(Math.random() < 0.5)
-					{
-						selectedGene = currentMumGene;
-					}
-					else
-					{
-						selectedGene = currentDadGene;						
-					}
-					
-					currentMumGene = null;
-					if(mumIterator.hasNext())
-					{
-						currentMumGene = mumIterator.next().getValue();					
-					}
-					
-					currentDadGene = null;
-					if(dadIterator.hasNext())
-					{
-						currentDadGene = dadIterator.next().getValue();					
-					}
-				}
-				
-				if(selectedGene != null)
-				{
-					// add selected link
-					babyLinks.put(selectedGene.getInnovationId(), selectedGene);
-					// add neurons
-					addNeuronToBaby(mum, dad, fitterParent, babyNeurons, selectedGene.getFromNeuron());
-					addNeuronToBaby(mum, dad, fitterParent, babyNeurons, selectedGene.getToNeuron());
-				}
-			}
-		}
-		
-		Genome baby = new Genome(mum.innovations.getNewGenomeId(), mum.inputNum, mum.outputNum, mum.innovations,
-				babyNeurons, babyLinks);
-		return baby;
+	public double getFitness() {
+		return fitness;
+	}
+
+	public void setAdjustedFitness(double adjustedFitness) {
+		this.adjustedFitness = adjustedFitness;
+	}
+
+	public double getAmountToSpawn() {
+		return amountToSpawn;
+	}
+
+	public void setAmountToSpawn(double amountToSpawn) {
+		this.amountToSpawn = amountToSpawn;
+	}
+
+	public void setSpecieId(int specieId) {
+		this.specieId = specieId;
 	}
 
 	public int compareTo(Genome g)

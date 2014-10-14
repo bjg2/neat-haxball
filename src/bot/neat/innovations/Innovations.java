@@ -21,6 +21,7 @@ public class Innovations
 	int newNeuronInnovationId = 0;
 	
 	int genomeId = 0;
+	int specieId = 0;
 	
 	public Innovations(int inputNum, int outputNum)
 	{
@@ -127,6 +128,11 @@ public class Innovations
 	public int getNewGenomeId()
 	{
 		return genomeId++;
+	}
+	
+	public int getNewSpecieId()
+	{
+		return specieId++;
 	}
 
 	public ArrayList<LinkInnovation> getInitialLinks()
