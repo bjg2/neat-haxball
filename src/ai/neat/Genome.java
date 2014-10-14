@@ -1,5 +1,7 @@
 package ai.neat;
 
+import haxball.Logger;
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -125,6 +127,8 @@ public class Genome implements Comparable<Genome>
 			// it will not mutate
 			return;
 		}
+		
+		Logger.log("mutating new link");
 
 		int fromNeuron;
 		int toNeuron;
@@ -207,6 +211,8 @@ public class Genome implements Comparable<Genome>
 			return;
 		}
 		
+		Logger.log("mutating new neuron");
+		
 		// get all the links that could be used
 		ArrayList<LinkGene> possibleLinks = new ArrayList<LinkGene>();
 		for(LinkGene lg : links.values())
@@ -281,11 +287,15 @@ public class Genome implements Comparable<Genome>
 				{
 					// we'll totally change this weight
 					lg.totallyRandomizeWeight();
+					
+					Logger.log("totally changing link weight");
 				}
 				else
 				{
 					// we'll randomize this weight by small amount
 					lg.smallRandomizeWeight();
+
+					Logger.log("small changing link weight");
 				}
 			}
 		}
@@ -300,6 +310,8 @@ public class Genome implements Comparable<Genome>
 			{
 				// we'll mutate this link weight
 				ng.smallRandomizeActivationResponse();
+				
+				Logger.log("small changing activation response");
 			}
 		}
 	}

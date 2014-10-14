@@ -375,7 +375,7 @@ public class Game
 	
 	public String scoreString()
 	{
-		return score[0] + ":" + score[1];
+		return score[0] + " : " + score[1];
 	}
 	
 	public void drawScore()

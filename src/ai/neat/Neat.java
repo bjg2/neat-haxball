@@ -1,6 +1,8 @@
 package ai.neat;
 
 import game.Game;
+import haxball.Logger;
+import haxball.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,15 +45,18 @@ public class Neat
 	public void train()
 	{
 		// all the generations
-		for(int generationI = 0; generationI < NeatParams.generationsN; generationI++)
+		for(int epochI = 0; epochI < NeatParams.generationsN; epochI++)
 		{
-			// new generation
-			epoch();
+			// new epoch
+			
+			Logger.log("epoch " + epochI + " started");
+			epoch(Utils.loggingFolder + "/" + epochI);
+			Logger.log("epoch " + epochI + " finished", true);
 		}
 	}
 
 	// play one game between two bots, from which the fitness will be calculated
-	void playGame(NeuralNetBot bot1, NeuralNetBot bot2)
+	Game playGame(NeuralNetBot bot1, NeuralNetBot bot2)
 	{
 		bot1.gameStarted();
 		bot2.gameStarted();
@@ -61,18 +66,29 @@ public class Neat
 		{
 			game.update(null, null);
 		}
+		
+		return game;
 	}
 	
 	// play the whole tournament, from which fitness will be calculated
 	public void playTournament()
 	{
+		Logger.log("tournament started");
+		
 		// swiss system
-		SwissPairingSystem swiss = new SwissPairingSystem(population.size(), NeatParams.numberOfRounds);
+		SwissPairingSystem swiss = new SwissPairingSystem(population.size(), NeatParams.numberOfRounds);		
 		
 		// play the tournament
+		Logger.addTab();
 		for(int roundI = 0; roundI < NeatParams.numberOfRounds; roundI++)
 		{
+			Logger.log("round " + roundI + " started");
+
+			Logger.addTab();
+			
+			Logger.log("pairing started");
 			int[][] pairings = swiss.makeNewPairings();
+			Logger.log("pairing finished", true);
 			
 			for(int pairI = 0; pairI < pairings.length; pairI++)
 			{
@@ -81,31 +97,44 @@ public class Neat
 				
 				NeuralNetBot bot1 = population.get(team1).phenotype;
 				NeuralNetBot bot2 = population.get(team2).phenotype;
-								
-				playGame(bot1, bot2);
+				
+				Game game = playGame(bot1, bot2);
+				
+				Logger.log("team " + team1 + " [" + swiss.scores[team1] + "] (" + bot1.getGameFitness() + ") "
+						+ game.scoreString()
+						+ " (" + bot2.getGameFitness() + ") [" + swiss.scores[team2] + "] team " + team2);
 				
 				swiss.gameFinished(team1, team2, bot1.getGameFitness(), bot2.getGameFitness());
 			}
+			Logger.removeTab();
+			
+			Logger.log("round " + roundI + " finished", true);
 		}
+		Logger.removeTab();
 		
 		// put score as genomes fitness
 		for(int genomeI = 0; genomeI < population.size(); genomeI++)
 		{
 			population.get(genomeI).fitness = swiss.scores[genomeI];
 		}
+		
+		Logger.log("tournament finished", true);
 	}	
 	
 	// pass one generation
 	// make species
 	// etc
-	public void epoch()
-	{		
+	public void epoch(String savePath)
+	{
+		Logger.addTab();
+		
 		// play tournament to determine all the fitness scores
 		playTournament();
 		
 		Genome bestOrganism = null;
 		
 		// sort by fitness in every old specie and update age
+		Logger.log("updating specie new epoch started");
 		for(Specie s : species)
 		{
 			s.newEpoch();
@@ -115,13 +144,17 @@ public class Neat
 				bestOrganism = s.leader;
 			}
 		}
+		Logger.log("updating specie new epoch finished", true);
 
+		Logger.log("removing not improving species started");
 		for(int specieI = 0; specieI < species.size(); specieI++)
 		{
 			Specie s = species.get(specieI);
 			if(s.generationsWithNoImprovement > NeatParams.generationWithoutImprovementMaxNum
 					&& bestOrganism != s.leader)
 			{
+				Logger.log("removing specie " + s.specieId + " because not improving");
+				
 				// this specie is not improving for too long
 				// and the best organism is not in this specie
 				// remove this specie
@@ -129,14 +162,19 @@ public class Neat
 				specieI--;
 			}
 		}
+		Logger.log("removing not improving species finished", true);
 		
 		// make new population
 		population.clear();
-		
+
+		Logger.log("making new population started");
+		Logger.addTab();
 		for(int specieI = 0; specieI < species.size(); specieI++)
 		{
 			// make new generation in every specie
 			Specie s = species.get(specieI);
+
+			Logger.log("reproducing in specie " + s.specieId, true);
 			
 			int numToSpawn = (int) Math.round( s.spawnRequired );
 			
@@ -147,7 +185,9 @@ public class Neat
 			}
 			
 			boolean madeLeader = false;
-			
+
+			Logger.log("spawning baby started");
+			Logger.addTab();
 			for(int spawnI = 0; spawnI < numToSpawn; spawnI++)
 			{
 				Genome baby = null;
@@ -157,6 +197,8 @@ public class Neat
 					// leader goes to the next generation
 					baby = new Genome(s.leader);
 					madeLeader = true;
+					
+					Logger.log("taking one parent - leader", true);
 				}
 				else if(s.getMembersMatingNum() == 1
 						|| Math.random() > NeatParams.crossoverRate)
@@ -164,6 +206,8 @@ public class Neat
 					// only one member for mating in the specie, or not crossovering for this one
 					// just mutating chosen genome
 					baby = new Genome(s.spawn());
+
+					Logger.log("taking one parent", true);
 				}
 				else
 				{
@@ -177,21 +221,31 @@ public class Neat
 					}
 					
 					baby = crossover(mum, dad);
+					Logger.log("taking two parents", true);
 				}
-				
+
 				// mutation
+				Logger.log("mutation started");
+				Logger.addTab();
 				baby.mutateNewNeuron();
 				baby.mutateNewLink();
 				baby.mutateWeights();
 				baby.mutateActivationResponse();
+				Logger.removeTab();
+				Logger.log("mutation finished", true);
 				
 				// create appropriate neural net
+				Logger.log("creating phenotype");
 				baby.createPhenotype();
 				
 				// add to the new population
 				population.add(baby);
-			}			
+			}
+			Logger.removeTab();
+			Logger.log("spawning baby finished");
 		}
+		Logger.removeTab();
+		Logger.log("making new population finished", true);
 		
 		// empty all the species
 		for(Specie s : species)
@@ -200,6 +254,8 @@ public class Neat
 		}
 		
 		// divide genomes into species
+		Logger.log("dividing genomes into species started");
+		Logger.addTab();
 		for(Genome g : population)
 		{
 			Specie closeSpecie = null;
@@ -221,12 +277,34 @@ public class Neat
 				Specie newSpecie = new Specie(innovations.getNewSpecieId());
 				newSpecie.addMember(g);
 				species.add(newSpecie);
+				
+				Logger.log("specie " + newSpecie.specieId + " created");
 			}
 			else
 			{
 				closeSpecie.addMember(g);
 			}
 		}
+		Logger.removeTab();
+		Logger.log("dividing genomes into species finished", true);
+		
+		Logger.log("removing empty species started");
+		for(int specieI = 0; specieI < species.size(); specieI++)
+		{
+			Specie s = species.get(specieI);
+			if(s.members.size() == 0)
+			{
+				Logger.log("removing specie " + s.specieId + " cause it is empty");
+				
+				// noone in this specie
+				species.remove(specieI);
+				specieI--;
+			}
+		}
+		Logger.log("removing empty species finished");
+		
+		Logger.log("dividing genomes into species finished");		
+		Logger.removeTab();
 	}
 	
 	// making baby genome from mum and dad genomes

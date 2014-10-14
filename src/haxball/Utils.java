@@ -55,6 +55,8 @@ public final class Utils
 	public static float scoreSpace;
 	public static PFont scoreFont;
 	
+	public static String loggingFolder = "C:/Users/bjg/Desktop/neat";
+	
 	public static void initUtils(PApplet parent)
 	{		
 		// commands
@@ -134,6 +136,8 @@ public final class Utils
 		
 		scoreTextH = 25;
 		scoreFont = parent.createFont("Comic Sans MS Bold", scoreTextH);
+		
+		createFolderIfNotExists(loggingFolder);
 	}
 	
 	// dist point P from line segment AB
