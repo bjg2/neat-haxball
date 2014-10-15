@@ -20,9 +20,9 @@ public class GameState {
 	public static float centerR = 75;
 	
 	public static float maxPlayerAcceleration = 100;
-	public static float maxPlayerVelocity = 958.95465f;
+	public static float maxPlayerVelocity = 22f;
 	public static float maxShootAcceleration = 2000;
-	public static float maxShootVelocity = 1339.6011f;
+	public static float maxShootVelocity = 101.67517f;
 	
 	public static float friction = 0.15f;
 	public static float ballRestitution = 0.5f;
@@ -32,7 +32,8 @@ public class GameState {
 
 	public static int numOfPlayers = 1;
 	
-	public static int gameTime = 60 * 60 * 5; // 5 mins, 60 fps
+	//public static int gameTime = 60 * 60 * 5; // 5 mins, 60 fps
+	public static int gameTime = 60 * 60; // 5 mins, 60 fps
 	public static int goalCooloutTime = 60 * 5; // 5 secs, 60 fps
 	
 	public static float shootAngDiff = PApplet.PI / 10;

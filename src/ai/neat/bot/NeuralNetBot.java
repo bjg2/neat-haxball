@@ -95,6 +95,11 @@ public class NeuralNetBot extends ABot
 		return fitnessCalculator.fitness;
 	}
 	
+	public FitnessCalculator getFitnessCalculator()
+	{
+		return fitnessCalculator;
+	}
+	
 	public double getGameFitnessSum()
 	{
 		return fitnessCalculator.fitnessSum;

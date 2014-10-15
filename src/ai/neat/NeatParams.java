@@ -25,7 +25,7 @@ public class NeatParams
 	public static double disjointCoef = 1;
 	public static double excessCoef = 1;
 	public static double matchedCoef = 0.4;
-	public static double specieCompatibilityTreshold = 0.26;
+	public static double specieCompatibilityTreshold = 1.5;
 	
 	// specie fitness adjustment parameters
 	public static double youngAgeThreshold = 10;
@@ -41,7 +41,7 @@ public class NeatParams
 	
 	// genetic algo params
 	public static int populationSize = 100;
-	public static int generationsN = 100;
+	public static int generationsN = 1000;
 	public static int numberOfRounds = 20;
 	public static double populationPercentMating = 0.2;
 	public static double crossoverRate = 0.7;

@@ -30,6 +30,9 @@ public class Genome implements Comparable<Genome>
 	
 	int specieId;
 	
+	int parent1Id = -1;
+	int parent2Id = -1;
+	
 	Innovations innovations;
 	
 	NeuralNetBot phenotype;
@@ -46,6 +49,7 @@ public class Genome implements Comparable<Genome>
 		this.innovations = g.innovations;
 		this.neurons = (TreeMap<Integer, NeuronGene>) g.neurons.clone();
 		this.links = (TreeMap<Integer, LinkGene>) g.links.clone();
+		this.parent1Id = g.genomeId;
 	}
 	
 	public Genome(int genomeId, int inputNum, int outputNum, Innovations innovations,
@@ -326,6 +330,8 @@ public class Genome implements Comparable<Genome>
 	public void saveGenome(String savePath)
 	{
 		String genomeText = "genomeId: " + genomeId + "\r\n";
+		genomeText += "parent1Id: " + parent1Id + "\r\n";
+		genomeText += "parent2Id: " + parent2Id + "\r\n";
 		genomeText += "fitness: " + fitness + "\r\n";
 		genomeText += "adjustedFitness: " + adjustedFitness + "\r\n";
 		genomeText += "amountToSpawn: " + amountToSpawn + "\r\n";

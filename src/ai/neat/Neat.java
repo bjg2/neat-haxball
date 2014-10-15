@@ -150,9 +150,9 @@ public class Neat
 				
 				Game game = playGame(bot1, bot2);
 				
-				Logger.log("team " + team1 + " [" + swiss.scores[team1] + "] (" + bot1.getGameFitness() + ") "
+				Logger.log("team " + team1 + " [" + swiss.scores[team1] + "] (" + bot1.getFitnessCalculator() + ") "
 						+ game.scoreString()
-						+ " (" + bot2.getGameFitness() + ") [" + swiss.scores[team2] + "] team " + team2);
+						+ " (" + bot2.getFitnessCalculator() + ") [" + swiss.scores[team2] + "] team " + team2);
 				
 				swiss.gameFinished(team1, team2, bot1.getGameFitness(), bot2.getGameFitness());
 			}
@@ -534,6 +534,8 @@ public class Neat
 		
 		Genome baby = new Genome(mum.innovations.getNewGenomeId(), mum.inputNum, mum.outputNum, mum.innovations,
 				babyNeurons, babyLinks);
+		baby.parent1Id = mum.genomeId;
+		baby.parent2Id = dad.genomeId;
 		return baby;
 	}
 

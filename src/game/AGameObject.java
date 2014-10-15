@@ -21,6 +21,8 @@ public abstract class AGameObject
 	Body body;
 	PVector initPos;
 	
+	Vec2 lastPos = null;
+	
 	protected AGameObject(PApplet parent, Box2DProcessing box2d, PVector pos)
 	{
 		this.parent = parent;
@@ -47,9 +49,9 @@ public abstract class AGameObject
 	{
 		return box2d.coordWorldToPixels(body.getPosition());
 	}
-	
+ 
 	public Vec2 getVelocity()
 	{
-		return box2d.coordWorldToPixels(body.getLinearVelocity());
+		return body.getLinearVelocity();
 	}
 }

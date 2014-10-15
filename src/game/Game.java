@@ -222,6 +222,16 @@ public class Game
 		Vec2[] out = new Vec2[in.length];
 		for(int i = 0; i < in.length; i++)
 		{
+			out[i] = new Vec2(-in[i].x, in[i].y);
+		}
+		return out;
+	}
+	
+	Vec2[] xFromOtherSide(Vec2[] in)
+	{
+		Vec2[] out = new Vec2[in.length];
+		for(int i = 0; i < in.length; i++)
+		{
 			out[i] = new Vec2(GameState.realFieldW - 1 - in[i].x, in[i].y);
 		}
 		return out;
@@ -283,7 +293,7 @@ public class Game
 						{
 							keyboardShoot = true;
 						}
-			}			
+			}
 			
 			GameMove keyboardMove = new GameMove(keyboardXMove, keyboardYMove, keyboardShoot);
 
@@ -296,12 +306,13 @@ public class Game
 			
 			if(teamId == 1)
 			{
-				myPlayersPos = reverseX(myPlayersPos);
-				enemyPlayersPos = reverseX(enemyPlayersPos);
+				myPlayersPos = xFromOtherSide(myPlayersPos);
+				enemyPlayersPos = xFromOtherSide(enemyPlayersPos);
+				myBallPos.x = GameState.realFieldW - 1 - myBallPos.x;
+				
 				myPlayersVelocity = reverseX(myPlayersVelocity);
 				enemyPlayersVelocity = reverseX(enemyPlayersVelocity);
-				myBallPos.x = GameState.realFieldW - 1 - myBallPos.x;
-				myBallVelocity.x = GameState.realFieldW - 1 - myBallVelocity.x;
+				myBallVelocity.x = -myBallVelocity.x;
 			}
 			
 			GameState state = new GameState(myPlayersPos, myPlayersVelocity,

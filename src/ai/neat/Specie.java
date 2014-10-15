@@ -55,17 +55,18 @@ public class Specie implements Comparable<Specie>
 			{
 				fitness *= NeatParams.youngAgeBonus;
 			}
-						
+
 			// punish if old specie
 			if(age > NeatParams.oldAgeThreshold)
 			{
 				fitness *= NeatParams.oldAgePenalty;
 			}
 			
-			totalFitness += fitness;
 			
 			// shared fitness
 			double adjustedFitness = fitness / members.size();
+			
+			totalFitness += adjustedFitness;
 			g.setAdjustedFitness(adjustedFitness);
 		}
 		

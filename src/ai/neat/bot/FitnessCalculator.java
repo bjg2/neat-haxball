@@ -8,11 +8,18 @@ import ai.GameState;
 
 public class FitnessCalculator
 {
+	// testing on only being close to the ball that is close to the enemy goal
 	public static double scoreW = 0;
-	public static double ballPlayerDistW = 0.1;
+	public static double ballPlayerDistW = 0.01;
 	public static double ballGoalDistW = 0.01;
 	public static double attackW = 0;
-	public static double defenceW = 0;	
+	public static double defenceW = 0;
+	
+	double scoreFitness;
+	double ballPlayerDistFitness;
+	double ballGoalDistFitness;
+	double attackFitness;
+	double defenceFitness;
 	
 	double fitness;
 	double fitnessSum;
@@ -21,7 +28,7 @@ public class FitnessCalculator
 	
 	public void gameStared()
 	{
-		fitness = 0;
+		scoreFitness = ballPlayerDistFitness = ballGoalDistFitness = attackFitness = defenceFitness = 0;
 	}
 	
 	public void move(GameState state)
@@ -38,10 +45,10 @@ public class FitnessCalculator
 		double enemyBallDist = enemyPlayerPos.sub(state.ballPos).length();
 		
 		// me closer to the ball the better
-		fitness -= ballPlayerDistW * myBallDist;
+		ballPlayerDistFitness -= ballPlayerDistW * myBallDist;
 		
 		// enemy further from the ball the better
-		fitness += ballPlayerDistW * enemyBallDist;
+		//ballPlayerDistFitness += ballPlayerDistW * enemyBallDist;
 		
 		Vec2 myGoalCenter = new Vec2((GameState.realFieldW - GameState.fieldW) / 2,
 				GameState.realFieldH / 2);
@@ -51,24 +58,26 @@ public class FitnessCalculator
 		double ballEnemyGoalDist = enemyGoalCenter.sub(state.ballPos).length();
 
 		// ball closer to the enemy goal the better
-		fitness -= ballGoalDistW * ballEnemyGoalDist;
+		ballGoalDistFitness -= ballGoalDistW * ballEnemyGoalDist;
 
 		// ball further from my goal the better
-		fitness += ballGoalDistW * ballMyGoalDist;
+		//ballGoalDistFitness += ballGoalDistW * ballMyGoalDist;
 		
 		// how good am i attacking
-		fitness += attackW * attackFitness(state.myPlayerPos, enemyPlayerPos,
+		attackFitness += attackW * attackFitness(state.myPlayerPos, enemyPlayerPos,
 				state.ballPos, enemyGoalCenter);
 		
 		// how good am i defending
-		fitness -= defenceW * attackFitness(enemyPlayerPos, state.myPlayerPos,
+		defenceFitness -= defenceW * attackFitness(enemyPlayerPos, state.myPlayerPos,
 				state.ballPos, myGoalCenter);
 	}
 	
 	public void gameFinished(GameState state)
 	{
 		// better score better bot
-		fitness += (state.myScore - state.enemyScore) * scoreW;
+		scoreFitness += (state.myScore - state.enemyScore) * scoreW;
+		
+		fitness = scoreFitness + ballPlayerDistFitness + ballGoalDistFitness + attackFitness + defenceFitness;
 		
 		fitnessSum += fitness;
 		goalsGiven += state.myScore;
@@ -115,5 +124,15 @@ public class FitnessCalculator
 				thisBallPos, goalPos);
 		
 		return ret;
+	}
+	
+	public String toString()
+	{
+		return "fitness: " + fitness
+				+ " scoreFitness: " + scoreFitness
+				+ " ballPlayerDistFitness: " + ballPlayerDistFitness
+				+ " ballGoalDistFitness: " + ballGoalDistFitness
+				+ " attackFitness: " + attackFitness
+				+ " defenceFitness: " + defenceFitness;
 	}
 }
