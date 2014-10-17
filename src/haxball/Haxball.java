@@ -4,8 +4,8 @@ import game.Game;
 
 import java.util.HashMap;
 
-import ai.neat.Neat;
 import processing.core.PApplet;
+import ai.neat.Neat;
 
 public class Haxball extends PApplet
 {
@@ -33,8 +33,10 @@ public class Haxball extends PApplet
 		initKeyPressed(Utils.downKey);
 		initKeyPressed(Utils.rightKey);
 		initKeyPressed(Utils.shootKey);
-		
-		//game = new Game(this, null, null);
+
+		//Genome g0 = Genome.readGenome("C:/Users/bjg/Desktop/neatNew/1000/genomes/100119.txt");
+		//Genome g1 = Genome.readGenome("C:/Users/bjg/Desktop/neatNew/1000/genomes/100119.txt");
+		//game = new Game(this, g0.createPhenotype(), g1.createPhenotype());
 		
 		Neat neat = new Neat(this);
 		neat.train();

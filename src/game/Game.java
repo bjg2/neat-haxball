@@ -318,7 +318,7 @@ public class Game
 			GameState state = new GameState(myPlayersPos, myPlayersVelocity,
 					enemyPlayersPos, enemyPlayersVelocity,
 					myBallPos, myBallVelocity,
-					ballFor, score[teamId], score[(teamId == 0)? 1 : 0], timeLeft,
+					ballFor == -1 || ballFor == teamId, score[teamId], score[(teamId == 0)? 1 : 0], timeLeft,
 					goalCooloutTimeLeft <= 0);
 			
 			teams[teamId].makeMove(keyboardMove, state);
@@ -377,7 +377,7 @@ public class Game
 				GameState state = new GameState(null, null,
 						null, null,
 						null, null,
-						ballFor, score[teamId], score[(teamId == 0)? 1 : 0], timeLeft,
+						false, score[teamId], score[(teamId == 0)? 1 : 0], timeLeft,
 						false);
 				teams[teamId].gameFinished(state);
 			}

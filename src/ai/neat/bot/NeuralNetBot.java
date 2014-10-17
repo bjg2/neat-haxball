@@ -30,9 +30,9 @@ public class NeuralNetBot extends ABot
 		
 		// prepare inputs for the net
 		Vec2 enemyPlayerPos = state.enemyPlayersPos[0];
-		Vec2 enemyPlayerVelocity = state.enemyPlayersPos[0];
+		Vec2 enemyPlayerVelocity = state.enemyPlayersVelocity[0];
 		
-		double[] inputs = new double[12];
+		double[] inputs = new double[13];
 		
 		inputs[0] = (double) state.myPlayerPos.x / GameState.realFieldW;
 		inputs[1] = (double) state.myPlayerPos.y / GameState.realFieldH;
@@ -46,6 +46,7 @@ public class NeuralNetBot extends ABot
 		inputs[9] = (double) state.ballPos.y / GameState.realFieldH;
 		inputs[10] = (double) state.ballVelocity.x / GameState.maxShootVelocity;
 		inputs[11] = (double) state.ballVelocity.y / GameState.maxShootVelocity;
+		inputs[12] = state.canTouchBall? 1 : 0;
 		
 		// do the net stuff
 		double[] outputs = net.update(inputs);

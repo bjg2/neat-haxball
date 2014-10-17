@@ -85,6 +85,20 @@ public class Neat
 		// save info text
 		String infoText = "population size: " + population.size() + "\r\n";
 		infoText += "species num: " + species.size() + "\r\n";
+		
+		double avgNumOfNeurons = 0;
+		double avgNumOfLinks = 0;
+		for(Genome g : population)
+		{
+			avgNumOfNeurons += g.neurons.size();
+			avgNumOfLinks += g.links.size();
+		}
+		avgNumOfNeurons /= population.size();
+		avgNumOfLinks /= population.size();
+
+		infoText += "avgNumOfNeurons: " + avgNumOfNeurons + "\r\n";
+		infoText += "avgNumOfLinks: " + avgNumOfLinks + "\r\n";
+		
 		Logger.logToFile(savePath + "/info.txt", infoText);
 		
 		// save species
@@ -195,10 +209,10 @@ public class Neat
 			}
 		}
 		Logger.log("updating specie new epoch finished", true);
-		
+
 		// save population
 		savePopulation(savePath);
-
+				
 		int killedSpeciesForNotImproving = 0;
 		Logger.log("removing not improving species started");
 		for(int specieI = 0; specieI < species.size(); specieI++)
@@ -218,6 +232,17 @@ public class Neat
 			}
 		}
 		Logger.log("removing not improving species finished", true);
+		
+		// choosing spawn num for species
+		double avgAdjustedFitnessSum = 0;
+		for(Specie s : species)
+		{
+			avgAdjustedFitnessSum += s.avgAdjustedFitness;
+		}
+		for(Specie s : species)
+		{
+			s.spawnRequired = s.avgAdjustedFitness / avgAdjustedFitnessSum * NeatParams.populationSize;
+		}
 		
 		// make new population
 		population.clear();
@@ -313,6 +338,8 @@ public class Neat
 		// divide genomes into species
 		Logger.log("dividing genomes into species started");
 		Logger.addTab();
+		
+		// make new species needed
 		for(Genome g : population)
 		{
 			Specie closeSpecie = null;
@@ -338,11 +365,25 @@ public class Neat
 				
 				Logger.log("specie " + newSpecie.specieId + " created");
 			}
-			else
-			{
-				closeSpecie.addMember(g);
-			}
 		}
+		// divide into species
+		for(Genome g : population)
+		{
+			Specie closeSpecie = null;
+			double closeSpecieDist = -1;
+			
+			for(Specie s : species)
+			{
+				if(closeSpecie == null || compatibilityDistance(g, s.leader) < closeSpecieDist)
+				{
+					closeSpecie = s;
+					closeSpecieDist = compatibilityDistance(g, s.leader); 
+				}
+			}
+			
+			closeSpecie.addMember(g);
+		}
+		
 		Logger.removeTab();
 		Logger.log("dividing genomes into species finished", true);
 		
@@ -524,7 +565,7 @@ public class Neat
 				if(selectedGene != null)
 				{
 					// add selected link
-					babyLinks.put(selectedGene.getInnovationId(), selectedGene);
+					babyLinks.put(selectedGene.getInnovationId(), new LinkGene(selectedGene));
 					// add neurons
 					addNeuronToBaby(mum, dad, fitterParent, babyNeurons, selectedGene.getFromNeuron());
 					addNeuronToBaby(mum, dad, fitterParent, babyNeurons, selectedGene.getToNeuron());
@@ -547,20 +588,20 @@ public class Neat
 		{
 			if(mum == fitterParent)
 			{
-				babyNeurons.put(neuronId, mum.neurons.get(neuronId));
+				babyNeurons.put(neuronId, new NeuronGene(mum.neurons.get(neuronId)));
 			}
 			else
 			{
-				babyNeurons.put(neuronId, dad.neurons.get(neuronId));
+				babyNeurons.put(neuronId, new NeuronGene(dad.neurons.get(neuronId)));
 			}
 		}
 		else if(mum.neuronExists(neuronId))
 		{
-			babyNeurons.put(neuronId, mum.neurons.get(neuronId));						
+			babyNeurons.put(neuronId, new NeuronGene(mum.neurons.get(neuronId)));						
 		}
 		else
 		{
-			babyNeurons.put(neuronId, dad.neurons.get(neuronId));
+			babyNeurons.put(neuronId, new NeuronGene(dad.neurons.get(neuronId)));
 		}
 	}
 	

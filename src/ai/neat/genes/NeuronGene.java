@@ -16,6 +16,18 @@ public class NeuronGene implements Comparable<NeuronGene>
 	{
 	}
 	
+	public NeuronGene(String ngString)
+	{
+		String[] ngParts = ngString.split(" ");
+		
+		innovationId = Integer.parseInt(ngParts[1]);
+		type = NeuronType.valueOf(ngParts[3]);
+		recurrent = Boolean.parseBoolean(ngParts[5]);
+		activationResponse = Double.parseDouble(ngParts[7]);
+		posX = Double.parseDouble(ngParts[9]);
+		posY = Double.parseDouble(ngParts[11]);
+	}
+	
 	public NeuronGene(NeuronInnovation ni, double posX)
 	{
 		this(ni.getInnovationId(), ni.getType(), false, posX,

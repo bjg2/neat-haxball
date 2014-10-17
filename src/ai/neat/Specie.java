@@ -30,6 +30,14 @@ public class Specie implements Comparable<Specie>
 	
 	public void addMember(Genome g)
 	{
+		for(Genome member : members)
+		{
+			if(g == member)
+			{
+				return;
+			}
+		}
+		
 		members.add(g);
 		g.setSpecieId(specieId);
 		
@@ -64,7 +72,8 @@ public class Specie implements Comparable<Specie>
 			
 			
 			// shared fitness
-			double adjustedFitness = fitness / members.size();
+			//double adjustedFitness = fitness / members.size();
+			double adjustedFitness = fitness;
 			
 			totalFitness += adjustedFitness;
 			g.setAdjustedFitness(adjustedFitness);
@@ -77,12 +86,14 @@ public class Specie implements Comparable<Specie>
 	public void calculateSpawnAmount()
 	{
 		adjustFitness();
+		/*
 		spawnRequired = 0;
 		for(Genome g : members)
 		{
 			g.amountToSpawn = g.adjustedFitness / avgAdjustedFitness;
 			spawnRequired += g.amountToSpawn; 
 		}
+		*/
 	}
 	
 	// sort by fitness, find the leader and update age and generationsWithNoImprovement, and calculate spawn amount
@@ -93,14 +104,19 @@ public class Specie implements Comparable<Specie>
 		Genome newLeader = members.get(0);
 		age++;
 		generationsWithNoImprovement++;
-		if(newLeader.fitness > leader.fitness)
+		
+		double oldAvgAdjustedFitness = avgAdjustedFitness;
+		adjustFitness();
+
+		//if(newLeader.fitness > leader.fitness)
+		if(avgAdjustedFitness > oldAvgAdjustedFitness)
 		{
 			generationsWithNoImprovement = 0;
 		}
 		
 		leader = newLeader;
 		
-		calculateSpawnAmount();
+		//calculateSpawnAmount();
 	}
 	
 	public int getMembersMatingNum()
@@ -165,6 +181,19 @@ public class Specie implements Comparable<Specie>
 		specieText += "generations without improvement: " + generationsWithNoImprovement + "\r\n";
 		specieText += "avgAdjustedFitness: " + avgAdjustedFitness + "\r\n";
 		specieText += "spawnRequired: " + spawnRequired + "\r\n";
+		
+		double avgNumOfNeurons = 0;
+		double avgNumOfLinks = 0;
+		for(Genome g : members)
+		{
+			avgNumOfNeurons += g.neurons.size();
+			avgNumOfLinks += g.links.size();
+		}
+		avgNumOfNeurons /= members.size();
+		avgNumOfLinks /= members.size();
+
+		specieText += "avgNumOfNeurons: " + avgNumOfNeurons + "\r\n";
+		specieText += "avgNumOfLinks: " + avgNumOfLinks + "\r\n";
 		
 		Logger.logToFile(savePath + "/" + specieId + ".txt", specieText);
 	}

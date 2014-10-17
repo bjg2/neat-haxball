@@ -9,11 +9,11 @@ import ai.GameState;
 public class FitnessCalculator
 {
 	// testing on only being close to the ball that is close to the enemy goal
-	public static double scoreW = 0;
+	public static double scoreW = 100000;
 	public static double ballPlayerDistW = 0.01;
 	public static double ballGoalDistW = 0.01;
-	public static double attackW = 0;
-	public static double defenceW = 0;
+	public static double attackW = 1000;
+	public static double defenceW = 1000;
 	
 	double scoreFitness;
 	double ballPlayerDistFitness;
@@ -64,12 +64,18 @@ public class FitnessCalculator
 		//ballGoalDistFitness += ballGoalDistW * ballMyGoalDist;
 		
 		// how good am i attacking
-		attackFitness += attackW * attackFitness(state.myPlayerPos, enemyPlayerPos,
-				state.ballPos, enemyGoalCenter);
+		if(state.myPlayerPos.x < state.ballPos.x && state.ballVelocity.length() > 0)
+		{
+			attackFitness += attackW * attackFitness(state.myPlayerPos, enemyPlayerPos,
+					state.ballPos, enemyGoalCenter);
+		}
 		
 		// how good am i defending
-		defenceFitness -= defenceW * attackFitness(enemyPlayerPos, state.myPlayerPos,
-				state.ballPos, myGoalCenter);
+		if(enemyPlayerPos.x > state.ballPos.x && state.ballVelocity.length() > 0)
+		{
+			defenceFitness -= defenceW * attackFitness(enemyPlayerPos, state.myPlayerPos,
+					state.ballPos, myGoalCenter);			
+		}
 	}
 	
 	public void gameFinished(GameState state)

@@ -16,6 +16,18 @@ public class LinkGene implements Comparable<LinkGene>
 	{
 	}
 	
+	public LinkGene(String lgString)
+	{
+		String[] lgParts = lgString.split(" ");
+		
+		innovationId = Integer.parseInt(lgParts[1]);
+		fromNeuron = Integer.parseInt(lgParts[3]);
+		toNeuron = Integer.parseInt(lgParts[5]);
+		weight = Double.parseDouble(lgParts[7]);
+		enabled = Boolean.parseBoolean(lgParts[9]);
+		recurrent = Boolean.parseBoolean(lgParts[11]);
+	}
+	
 	public LinkGene(LinkInnovation li)
 	{
 		this(li.getFromNeuron(), li.getToNeuron(),

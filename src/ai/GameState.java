@@ -43,7 +43,8 @@ public class GameState {
 	public Vec2[] myCoPlayersPos, myCoPlayersVelocity;
 	public Vec2[] enemyPlayersPos, enemyPlayersVelocity;
 	public Vec2 ballPos, ballVelocity;
-	public int ballFor, myScore, enemyScore, movesLeft;
+	public int myScore, enemyScore, movesLeft;
+	public boolean canTouchBall;
 	public boolean isPlaying;
 	
 	// help
@@ -52,7 +53,7 @@ public class GameState {
 	public GameState(Vec2[] myPlayersPos, Vec2[] myPlayersVelocity,
 			Vec2[] enemyPlayersPos, Vec2[] enemyPlayersVelocity,
 			Vec2 ballPos, Vec2 ballVelocity,
-			int ballFor, int myScore, int enemyScore, int movesLeft, boolean isPlaying)
+			boolean canTouchBall, int myScore, int enemyScore, int movesLeft, boolean isPlaying)
 	{
 		this.myPlayersPos = myPlayersPos;
 		this.myPlayersVelocity = myPlayersVelocity;
@@ -60,7 +61,7 @@ public class GameState {
 		this.enemyPlayersVelocity = enemyPlayersVelocity;
 		this.ballPos = ballPos;
 		this.ballVelocity = ballVelocity;
-		this.ballFor = ballFor;
+		this.canTouchBall = canTouchBall;
 		this.myScore = myScore;
 		this.enemyScore = enemyScore;
 		this.movesLeft = movesLeft;

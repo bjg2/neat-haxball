@@ -72,16 +72,16 @@ public class NeuralNet
 			}
 		}
 		
-		boolean nodesActivatedFromAllSources = false;
-		while(!nodesActivatedFromAllSources)
+		boolean outputNodesActivated = false;
+		while(!outputNodesActivated)
 		{
 			// repeat this code while output is not activated from every input neuron
 			// it will happen network depth times if run type is active
 			// or if doing snapshot the first time
 			// one time otherwise
 			
-			nodesActivatedFromAllSources = true;
-					
+			outputNodesActivated = true;
+
 			for(Neuron n : neurons.values())
 			{
 				if(n.type != NeuronType.bias && n.type != NeuronType.input)
@@ -97,18 +97,18 @@ public class NeuralNet
 							n.activationSum += inLink.fromNeuron.output * inLink.weight;
 							n.activated = true;
 						}
-						else
-						{
-							// this node is not activated from all input nodes
-							// will certainly do a new round of activations 
-							nodesActivatedFromAllSources = false;
-						}
 					}
 				}
 			}
 			
 			for(Neuron n : neurons.values())
 			{
+				if(n.type == NeuronType.output && !n.activated)
+				{
+					// this output node is not activated
+					outputNodesActivated = false;					
+				}
+				
 				if(n.type != NeuronType.bias && n.type != NeuronType.input && n.activated)
 				{
 					// calculate new outputs for neurons

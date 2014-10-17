@@ -2,6 +2,9 @@ package ai.neat;
 
 import haxball.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,7 +17,6 @@ import ai.neat.innovations.Innovations;
 import ai.neat.innovations.LinkInnovation;
 import ai.neat.innovations.NeuronInnovation;
 
-@SuppressWarnings("unchecked")
 public class Genome implements Comparable<Genome>
 {
 	int genomeId;
@@ -41,14 +43,47 @@ public class Genome implements Comparable<Genome>
 	{
 	}
 	
+	public Genome(String gString)
+	{
+		String[] gStringParts = gString.split("\r\n");
+		
+		genomeId = Integer.parseInt(gStringParts[0].split(" ")[1]);
+		parent1Id = Integer.parseInt(gStringParts[1].split(" ")[1]);
+		parent2Id = Integer.parseInt(gStringParts[2].split(" ")[1]);
+		fitness = Double.parseDouble(gStringParts[3].split(" ")[1]);
+		adjustedFitness = Double.parseDouble(gStringParts[4].split(" ")[1]);
+		amountToSpawn = Double.parseDouble(gStringParts[5].split(" ")[1]);
+		
+		int i;
+		for(i = 7; !gStringParts[i].equals("links:"); i++)
+		{
+			NeuronGene ng = new NeuronGene(gStringParts[i]);
+			neurons.put(ng.getInnovationId(), ng);
+		}
+		for(i++; i < gStringParts.length && !gStringParts[i].isEmpty(); i++)
+		{
+			LinkGene lg = new LinkGene(gStringParts[i]);
+			links.put(lg.getInnovationId(), lg);
+		}
+	}
+	
 	public Genome(Genome g)
 	{
 		this.genomeId = g.innovations.getNewGenomeId();
 		this.inputNum = g.inputNum;
 		this.outputNum = g.outputNum;
 		this.innovations = g.innovations;
-		this.neurons = (TreeMap<Integer, NeuronGene>) g.neurons.clone();
-		this.links = (TreeMap<Integer, LinkGene>) g.links.clone();
+		
+		for(NeuronGene ng : g.neurons.values())
+		{
+			neurons.put(ng.getInnovationId(), new NeuronGene(ng));
+		}
+		
+		for(LinkGene lg : g.links.values())
+		{
+			links.put(lg.getInnovationId(), new LinkGene(lg));
+		}
+		
 		this.parent1Id = g.genomeId;
 	}
 	
@@ -229,6 +264,13 @@ public class Genome implements Comparable<Genome>
 			}
 		}
 		
+		if(possibleLinks.size() == 0)
+		{
+			int a;
+			a = 2;
+			// happening for some reason
+		}
+		
 		// choose a link
 		LinkGene lg = possibleLinks.get((int)(Math.random() * possibleLinks.size()));
 		lg.setEnabled(false);
@@ -272,7 +314,7 @@ public class Genome implements Comparable<Genome>
 		LinkInnovation li2 = innovations.getLinkInnovation(newNeuronId, toNeuron);
 		
 		LinkGene lg1 = new LinkGene(li1.getFromNeuron(), li1.getToNeuron(),
-				1, true, false, li1.getInnovationId());
+				0.659046068407, true, false, li1.getInnovationId());
 		LinkGene lg2 = new LinkGene(li2.getFromNeuron(), li2.getToNeuron(),
 				oldWeight, true, false, li2.getInnovationId());
 		
@@ -322,9 +364,23 @@ public class Genome implements Comparable<Genome>
 	}
 	
 	// create the neural net phenotype
-	public void createPhenotype()
+	public NeuralNetBot createPhenotype()
 	{
 		phenotype = new NeuralNetBot(neurons, links);
+		return phenotype;
+	}
+	
+	public static Genome readGenome(String genomePath)
+	{
+		try
+		{
+			return new Genome(new String(Files.readAllBytes(Paths.get(genomePath))));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public void saveGenome(String savePath)
